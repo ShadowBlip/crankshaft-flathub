@@ -1,0 +1,10 @@
+image: archlinux
+secrets:
+  - d0834087-5f3d-4427-b7b0-04a29cd8a830 # github.com/Crankshaft-for-Steam/crankshaft-plugin-template deploy key
+sources:
+  - https://git.sr.ht/~avery/crankshaft-plugin-template
+tasks:
+ - mirror: |
+     ssh-keyscan github.com > "$HOME"/.ssh/known_hosts
+     cd crankshaft-plugin-template
+     git push --mirror git@github.com:Crankshaft-for-Steam/crankshaft-plugin-template.git
