@@ -1,4 +1,5 @@
 import { Component, createRef, RefObject } from 'preact';
+import { flathubLogo } from '../assets/logos';
 import { Flathub } from '../flathub/flathub';
 import { FlatpakEntry } from '../flathub/model';
 import { SMM } from '../types/SMM';
@@ -32,7 +33,12 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
         tabIndex={0}
       >
         <div class="allcollections_CollectionImage_2ERAQ allcollections_Has1Apps_3R8nX">
-          <img src={this.state.img} />
+          <div
+            class="allcollections_CollectionBG_akZn"
+            style="padding-left: 24px; padding-top: 24px"
+          >
+            <img src={this.state.img} />
+          </div>
         </div>
         <div class="allcollections_CollectionLabel_1J1LQ">
           <div>{props.text}</div>
@@ -79,10 +85,16 @@ export class Home extends Component<HomeProps, HomeState> {
         <div class="Panel Focusable gpfocuswithin">
           <div class="gamepadtabbedpage_TabContentsScroll_1X4dt srollpanel_ScrollPanel_1CXdi scrollpanel_ScrollY_313lB Panel Focusable gpfocuswithin">
             <div class="Panel Focusable gpfocuswithin">
+              <div>
+                <img
+                  src={`data:image/png;base64, ${flathubLogo}`}
+                  style="display: block; margin-left: auto; margin-right: auto; padding: 10px;"
+                />
+              </div>
               <div class="cssgrid_Container_DGRkX Panel Focusable gpfocuswithin">
                 <div
                   class="cssgrid_CSSGrid_3vHkm allcollections_Grid_Ma65K Panel Focusable gpfocuswithin"
-                  style="grid-template-columns: repeat(auto-fill, 185px); grid-auto-rows: 185px; gap: 22px; font-size: 16.8182px; paddding-left: 0px; padding-right: 0px;"
+                  style="grid-template-columns: repeat(auto-fill, 170px); grid-auto-rows: 185px; gap: 22px; font-size: 16.8182px; paddding-left: 0px; padding-right: 0px;"
                 >
                   {entries.map((entry) => (
                     <GridItem
