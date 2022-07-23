@@ -1,31 +1,25 @@
+import { render } from 'preact';
+import { Home } from './components/home';
 import { SMM } from './types/SMM';
 
-export const load = (smm: SMM) => {
-  console.info('Template plugin loaded!');
+// https://github.com/flathub/linux-store-frontend/issues/292
+// https://flathub.org/api/v1/apps/collection/recently-updated
+// https://flathub.org/api/v1/apps/org.sugarlabs.AbacusActivity
+// https://flathub.org/api/v1/apps/collection/popular
 
-  const render = async () => {
-    const modal = (
-      <div className="smm-example-modal">
-        <h1>Hello World!</h1>
-        <div>Woo!</div>
-      </div>
-    );
-    return modal;
-  };
+export const load = (smm: SMM) => {
+  console.info('Flathub plugin loaded!');
 
   smm.MenuManager.addMenuItem({
-    id: 'example',
-    label:
-      // TODO: attach this to SMM
-      (window as any).smmUIMode === 'deck' ? 'Hello World' : 'Hello World',
+    id: 'flathub',
+    label: 'Flathub',
     fontSize: 16,
-    render: async (_smm, root) => {
-      root.appendChild(await render());
-    },
+    render: async (smm: SMM, root: HTMLElement) =>
+      render(<Home smm={smm} />, root),
   });
 };
 
 export const unload = (smm: SMM) => {
-  console.info('Template plugin unloaded!');
-  smm.MenuManager.removeMenuItem('example');
+  console.info('Flathub plugin unloaded!');
+  smm.MenuManager.removeMenuItem('flathub');
 };

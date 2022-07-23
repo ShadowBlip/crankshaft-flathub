@@ -15,7 +15,7 @@ CRANKSHAFT_DATA_PATH ?= .var/app/space.crankshaft.Crankshaft/data/crankshaft
 
 # SSH Configuration
 SSH_USER ?= gamer
-SSH_HOST ?= 192.168.0.176
+SSH_HOST ?= 192.168.0.31
 SSH_MOUNT_PATH ?= /tmp/remote
 SSH_CRANKSHAFT_DATA_PATH ?= /home/$(SSH_USER)/$(CRANKSHAFT_DATA_PATH)
 
@@ -62,7 +62,7 @@ tunnel: ## Create an SSH tunnel to remote Steam Client (accessible on localhost:
 	ssh $(SSH_USER)@$(SSH_HOST) -N -f -L 4040:localhost:8080
 
 # Mounts the remote device and creates an SSH tunnel for CEF access
-$(SSH_MOUNT_PATH)/.mounted: $(SRC_FILES)
+$(SSH_MOUNT_PATH)/.mounted:
 	mkdir -p $(SSH_MOUNT_PATH)
 	sshfs -o default_permissions $(SSH_USER)@$(SSH_HOST):$(SSH_CRANKSHAFT_DATA_PATH) $(SSH_MOUNT_PATH)
 	$(MAKE) tunnel
@@ -77,7 +77,7 @@ remote-restart: ## Restart remote crankshaft
 	ssh $(SSH_USER)@$(SSH_HOST) systemctl --user restart crankshaft
 
 .PHONY: remote-update
-remote-update: dist $(SSH_MOUNT_PATH) $(SSH_MOUNT_PATH)/plugins/$(PLUGIN_NAME) remote-restart ## Remotely updates
+remote-update: dist $(SSH_MOUNT_PATH)/.mounted $(SSH_MOUNT_PATH)/plugins/$(PLUGIN_NAME) remote-restart ## Remotely updates
 
 .PHONY: clean
 clean: ## Clean all build artifacts

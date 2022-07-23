@@ -1,12 +1,12 @@
-name = "Crankshaft Plugin Template"
-version = "TODO"
-link = "TODO"
-source = "TODO"
+name = "Flathub"
+version = "1.0.0"
+link = "https://github.com/ShadowApex/crankshaft-flathub"
+source = "https://github.com/ShadowApex/crankshaft-flathub"
 min-crankshaft-version = "0.1.5"
 
 [author]
-name = "TODO"
-link = "TODO"
+name = "William Edwards"
+link = "https://github.com/ShadowApex"
 
 [entrypoints]
 
@@ -15,6 +15,6 @@ link = "TODO"
 	menu = false
 
 	[entrypoints.deck]
-	library = false
+	library = true
 	menu = false
 	quick-access = false
