@@ -3,50 +3,8 @@ import { flathubLogo } from '../assets/logos';
 import { Flathub } from '../flathub/flathub';
 import { FlatpakEntry } from '../flathub/model';
 import { SMM } from '../types/SMM';
-import { curl, curlBase64 } from '../util/curl';
-
-export interface GridItemProps {
-  smm: SMM;
-  img: string;
-  text: string;
-}
-
-export interface GridItemState {
-  img: string;
-}
-
-export class GridItem extends Component<GridItemProps, GridItemState> {
-  ref = createRef();
-  async componentDidMount() {
-    if (!this.ref.current) {
-      return;
-    }
-    const imgData = await curlBase64(this.props.smm, this.props.img);
-    this.setState({ img: `data:image/png;base64, ${imgData}` });
-  }
-
-  render(props: any) {
-    return (
-      <div
-        ref={this.ref}
-        class="allcollections_Collection_3IWn- Focusable gpfocuswithin"
-        tabIndex={0}
-      >
-        <div class="allcollections_CollectionImage_2ERAQ allcollections_Has1Apps_3R8nX">
-          <div
-            class="allcollections_CollectionBG_akZn"
-            style="padding-left: 24px; padding-top: 24px"
-          >
-            <img src={this.state.img} />
-          </div>
-        </div>
-        <div class="allcollections_CollectionLabel_1J1LQ">
-          <div>{props.text}</div>
-        </div>
-      </div>
-    );
-  }
-}
+import { GridItem } from './grid';
+import { SearchBar } from './search';
 
 export interface HomeProps {
   smm: SMM;
@@ -72,38 +30,42 @@ export class Home extends Component<HomeProps, HomeState> {
     this.setState({ entries: entries });
   }
 
-  // Fetches the image for the flatpak entry.
-  async getImage(entry: FlatpakEntry): Promise<string> {
-    return curlBase64(this.props.smm, entry.iconMobileUrl);
-  }
-
   render(props: HomeProps) {
     const entries = this.state.entries ? this.state.entries : [];
     return (
-      <div ref={this.ref}>
-        Welcome!
-        <div class="Panel Focusable gpfocuswithin">
-          <div class="gamepadtabbedpage_TabContentsScroll_1X4dt srollpanel_ScrollPanel_1CXdi scrollpanel_ScrollY_313lB Panel Focusable gpfocuswithin">
-            <div class="Panel Focusable gpfocuswithin">
-              <div>
-                <img
-                  src={`data:image/png;base64, ${flathubLogo}`}
-                  style="display: block; margin-left: auto; margin-right: auto; padding: 10px;"
-                />
-              </div>
-              <div class="cssgrid_Container_DGRkX Panel Focusable gpfocuswithin">
-                <div
-                  class="cssgrid_CSSGrid_3vHkm allcollections_Grid_Ma65K Panel Focusable gpfocuswithin"
-                  style="grid-template-columns: repeat(auto-fill, 170px); grid-auto-rows: 185px; gap: 22px; font-size: 16.8182px; paddding-left: 0px; padding-right: 0px;"
-                >
-                  {entries.map((entry) => (
-                    <GridItem
-                      smm={props.smm}
-                      img={entry.iconMobileUrl}
-                      text={entry.name}
-                    />
-                  ))}
-                </div>
+      <div
+        class="BasicUI GamepadMode gamepadui_BasicUiRoot_bo6E MediumWindow"
+        style="--basicui-header-height:40px;"
+        ref={this.ref}
+      >
+        <SearchBar smm={props.smm} />
+        <div
+          id="FlathubMain"
+          class="gamepadui_Content_1FxmN Panel Focusable gpfocuswithin"
+          style="padding-top: 42px"
+        >
+          <div class="Panel Focusable gpfocuswithin">
+            <div>
+              <img
+                src={`data:image/png;base64, ${flathubLogo}`}
+                style="display: block; margin-left: auto; margin-right: auto; padding: 10px;"
+              />
+            </div>
+            <div
+              class="cssgrid_Container_DGRkX Panel Focusable gpfocuswithin"
+              style="padding-left: 38px;"
+            >
+              <div
+                class="cssgrid_CSSGrid_3vHkm allcollections_Grid_Ma65K Panel Focusable gpfocuswithin"
+                style="grid-template-columns: repeat(auto-fill, 170px); grid-auto-rows: 185px; gap: 22px; font-size: 16.8182px; paddding-left: 0px; padding-right: 0px;"
+              >
+                {entries.map((entry) => (
+                  <GridItem
+                    smm={props.smm}
+                    img={entry.iconMobileUrl}
+                    text={entry.name}
+                  />
+                ))}
               </div>
             </div>
           </div>

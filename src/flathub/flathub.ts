@@ -21,4 +21,10 @@ export class Flathub {
     const url = `https://flathub.org/api/v1/apps/${appId}`;
     return await this.smm.Network.get<FlathubAppEntry>(url);
   }
+
+  public async install(
+    appId: string
+  ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+    return await this.smm.Exec.run('flatpak', ['install', '--user', appId]);
+  }
 }
