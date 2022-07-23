@@ -26,7 +26,9 @@ export class Home extends Component<HomeProps, HomeState> {
     if (!this.ref.current) {
       return;
     }
-    const entries = await this.flathub.getPopular();
+    const entries = (await this.flathub.getPopular()).filter(
+      (entry) => entry.flatpakAppId !== 'com.valvesoftware.Steam'
+    );
     this.setState({ entries: entries });
   }
 
