@@ -34,6 +34,13 @@ export class Home extends Component<HomeProps, HomeState> {
     this.setState({ entries: entries });
   }
 
+  async componentDidUpdate(prevProps: HomeProps, prevState: HomeState) {
+    // Scroll to the top if our current app changed
+    if (this.state.currentApp !== prevState.currentApp) {
+      this.ref.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
   async onSearch(value: string) {
     // Reset UI if search filter is empty
     if (value === '') {
@@ -62,8 +69,6 @@ export class Home extends Component<HomeProps, HomeState> {
 
   // Invoked when a grid item was selected
   async onAppSelect(value: string) {
-    // Scroll to the top
-    this.ref.current?.scrollIntoView();
     // Set the current app to display the app info
     this.setState({ entries: this.state.entries, currentApp: value });
   }
