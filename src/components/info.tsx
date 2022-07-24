@@ -59,36 +59,40 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     const appId = this.state.info.flatpakAppId;
     // Handle install action
     if (value === 'Install') {
-      this.props.smm.Toast.addToast(`Installing ${appId}...`);
+      this.props.smm.Toast.addToast(`Installing ${appId}...`, 'info', {
+        timeout: 10000,
+      });
       const out = await this.flathub.install(appId);
       // Ensure flatpak install succeeded
       if (out.exitCode !== 0) {
         console.log(out);
         this.props.smm.Toast.addToast(
-          `Error installing ${appId}: ${out.stderr}`
+          `Error installing ${appId}: ${out.stderr}`,
+          'error'
         );
         return;
       }
       // Re-render after installing
       await this.update(this.props, this.state);
-      this.props.smm.Toast.addToast('Done!');
+      this.props.smm.Toast.addToast('Done!', 'success');
       return;
     }
 
     // Handle uninstall action
-    this.props.smm.Toast.addToast('Uninstalling');
+    this.props.smm.Toast.addToast('Uninstalling', 'info');
     const out = await this.flathub.uninstall(appId);
     // Ensure flatpak install succeeded
     if (out.exitCode !== 0) {
       console.log(out);
       this.props.smm.Toast.addToast(
-        `Error uninstalling ${appId}: ${out.stderr}`
+        `Error uninstalling ${appId}: ${out.stderr}`,
+        'error'
       );
       return;
     }
     // Re-render after installing
     await this.update(this.props, this.state);
-    this.props.smm.Toast.addToast('Done!');
+    this.props.smm.Toast.addToast('Done!', 'success');
   }
 
   getTitle(state: AppInfoState) {
