@@ -7,6 +7,7 @@ export interface GridItemProps {
   appId: string;
   img: string;
   text: string;
+  onSelect?: (value: string) => Promise<void>;
 }
 
 export interface GridItemState {
@@ -41,6 +42,11 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
 
   async onClick(e: Event) {
     console.log(`Clicked grid item ${this.props.appId}`);
+
+    const value = this.props.appId;
+    if (this.props.onSelect && value) {
+      await this.props.onSelect(value);
+    }
   }
 
   render(props: GridItemProps, state: GridItemState) {

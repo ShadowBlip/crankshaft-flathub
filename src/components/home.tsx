@@ -13,6 +13,7 @@ export interface HomeProps {
 
 export interface HomeState {
   entries: FlatpakEntry[];
+  currentApp: string;
 }
 
 export class Home extends Component<HomeProps, HomeState> {
@@ -56,12 +57,24 @@ export class Home extends Component<HomeProps, HomeState> {
           iconMobileUrl: result.icon,
         } as FlatpakEntry)
     );
-    this.setState({ entries: entries });
+    this.setState({ entries: entries, currentApp: this.state.currentApp });
   }
 
-  // <AppInfo smm={props.smm} appId="com.discordapp.Discord" />
+  // Invoked when a grid item was selected
+  async onAppSelect(value: string) {
+    // Scroll to the top
+    document.documentElement.scrollTop = 0;
+    // Set the current app to display the app info
+    this.setState({ entries: this.state.entries, currentApp: value });
+  }
+
   render(props: HomeProps, state: HomeState) {
     const entries = state.entries ? state.entries : [];
+    const currentApp = state.currentApp ? (
+      <AppInfo smm={props.smm} appId={state.currentApp} />
+    ) : (
+      <div></div>
+    );
     return (
       <div
         class="BasicUI GamepadMode gamepadui_BasicUiRoot_bo6E MediumWindow"
@@ -77,6 +90,7 @@ export class Home extends Component<HomeProps, HomeState> {
           class="gamepadui_Content_1FxmN Panel Focusable gpfocuswithin"
           style="padding-top: 42px"
         >
+          {currentApp}
           <div class="Panel Focusable gpfocuswithin">
             <div>
               <img
@@ -98,6 +112,7 @@ export class Home extends Component<HomeProps, HomeState> {
                     img={entry.iconMobileUrl}
                     text={entry.name}
                     appId={entry.flatpakAppId}
+                    onSelect={(value: string) => this.onAppSelect(value)}
                   />
                 ))}
               </div>
