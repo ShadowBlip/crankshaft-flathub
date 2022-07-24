@@ -22,9 +22,34 @@ export class Flathub {
     return await this.smm.Network.get<FlathubAppEntry>(url);
   }
 
+  // Returns a list of installed flatpaks
+  public async getInstalled(): Promise<string[]> {
+    const out = await this.smm.Exec.run('flatpak', [
+      '--user',
+      'list',
+      '--app',
+      '--columns=application',
+    ]);
+    const appIds = out.stdout
+      .split('\n')
+      .filter((appId) => appId !== 'Application ID');
+    return appIds;
+  }
+
+  // Returns whether or not the given app is installed.
+  public async isInstalled(appId: string): Promise<boolean> {
+    return (await this.getInstalled()).includes(appId);
+  }
+
+  // Installs the given flatpak
   public async install(
     appId: string
   ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
-    return await this.smm.Exec.run('flatpak', ['install', '--user', appId]);
+    return await this.smm.Exec.run('flatpak', [
+      '--user',
+      'install',
+      '-y',
+      appId,
+    ]);
   }
 }
