@@ -1,6 +1,6 @@
 import { Component, createRef, RefObject } from 'preact';
 import { SMM } from '../types/SMM';
-import { curlBase64 } from '../util/curl';
+import { cachedCurlBase64, curlBase64 } from '../util/curl';
 
 export interface GridItemProps {
   smm: SMM;
@@ -19,7 +19,7 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
     if (!this.ref.current) {
       return;
     }
-    const imgData = await curlBase64(this.props.smm, this.props.img);
+    const imgData = await cachedCurlBase64(this.props.smm, this.props.img);
     this.setState({
       imgData: `data:image/png;base64, ${imgData}`,
       imgUrl: this.props.img,
@@ -31,7 +31,7 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
     nextProps: GridItemProps,
     nextState: GridItemState
   ) {
-    const imgData = await curlBase64(nextProps.smm, nextProps.img);
+    const imgData = await cachedCurlBase64(nextProps.smm, nextProps.img);
     this.setState({
       imgData: `data:image/png;base64, ${imgData}`,
       imgUrl: nextProps.img,
