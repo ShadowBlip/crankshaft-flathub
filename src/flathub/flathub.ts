@@ -33,6 +33,7 @@ export class Flathub {
     const appIds = out.stdout
       .split('\n')
       .filter((appId) => appId !== 'Application ID');
+    console.log(appIds);
     return appIds;
   }
 
@@ -48,6 +49,17 @@ export class Flathub {
     return await this.smm.Exec.run('flatpak', [
       '--user',
       'install',
+      '-y',
+      appId,
+    ]);
+  }
+  // Uninstalls the given flatpak
+  public async uninstall(
+    appId: string
+  ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+    return await this.smm.Exec.run('flatpak', [
+      '--user',
+      'uninstall',
       '-y',
       appId,
     ]);
