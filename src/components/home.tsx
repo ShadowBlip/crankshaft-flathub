@@ -4,6 +4,7 @@ import { Flathub } from '../flathub/flathub';
 import { FlatpakEntry } from '../flathub/model';
 import { SMM } from '../types/SMM';
 import { GridItem } from './grid';
+import { AppInfo } from './info';
 import { SearchBar } from './search';
 
 export interface HomeProps {
@@ -58,8 +59,9 @@ export class Home extends Component<HomeProps, HomeState> {
     this.setState({ entries: entries });
   }
 
-  render(props: HomeProps) {
-    const entries = this.state.entries ? this.state.entries : [];
+  // <AppInfo smm={props.smm} appId="com.discordapp.Discord" />
+  render(props: HomeProps, state: HomeState) {
+    const entries = state.entries ? state.entries : [];
     return (
       <div
         class="BasicUI GamepadMode gamepadui_BasicUiRoot_bo6E MediumWindow"
@@ -95,6 +97,7 @@ export class Home extends Component<HomeProps, HomeState> {
                     smm={props.smm}
                     img={entry.iconMobileUrl}
                     text={entry.name}
+                    appId={entry.flatpakAppId}
                   />
                 ))}
               </div>

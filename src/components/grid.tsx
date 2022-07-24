@@ -4,6 +4,7 @@ import { cachedCurlBase64, curlBase64 } from '../util/curl';
 
 export interface GridItemProps {
   smm: SMM;
+  appId: string;
   img: string;
   text: string;
 }
@@ -38,11 +39,16 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
     });
   }
 
+  async onClick(e: Event) {
+    console.log(`Clicked grid item ${this.props.appId}`);
+  }
+
   render(props: GridItemProps, state: GridItemState) {
     return (
       <div
         ref={this.ref}
         class="allcollections_Collection_3IWn- Focusable gpfocuswithin"
+        onClick={(e: Event) => this.onClick(e)}
         tabIndex={0}
       >
         <div class="allcollections_CollectionImage_2ERAQ allcollections_Has1Apps_3R8nX">
