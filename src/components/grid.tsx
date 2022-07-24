@@ -9,7 +9,8 @@ export interface GridItemProps {
 }
 
 export interface GridItemState {
-  img: string;
+  imgData: string;
+  imgUrl: string;
 }
 
 export class GridItem extends Component<GridItemProps, GridItemState> {
@@ -19,10 +20,25 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
       return;
     }
     const imgData = await curlBase64(this.props.smm, this.props.img);
-    this.setState({ img: `data:image/png;base64, ${imgData}` });
+    this.setState({
+      imgData: `data:image/png;base64, ${imgData}`,
+      imgUrl: this.props.img,
+    });
   }
 
-  render(props: GridItemProps) {
+  // Fetch new images if our URL property changes
+  async componentWillReceiveProps(
+    nextProps: GridItemProps,
+    nextState: GridItemState
+  ) {
+    const imgData = await curlBase64(nextProps.smm, nextProps.img);
+    this.setState({
+      imgData: `data:image/png;base64, ${imgData}`,
+      imgUrl: nextProps.img,
+    });
+  }
+
+  render(props: GridItemProps, state: GridItemState) {
     return (
       <div
         ref={this.ref}
@@ -34,7 +50,7 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
             class="allcollections_CollectionBG_akZn"
             style="padding-left: 24px; padding-top: 24px"
           >
-            <img src={this.state.img} />
+            <img src={state.imgData} />
           </div>
         </div>
         <div class="allcollections_CollectionLabel_1J1LQ">

@@ -32,6 +32,32 @@ export class Home extends Component<HomeProps, HomeState> {
     this.setState({ entries: entries });
   }
 
+  async onSearch(value: string) {
+    // Reset UI if search filter is empty
+    if (value === '') {
+      return await this.componentDidMount();
+    }
+
+    // Do nothing until we have at least 3 characters
+    if (value.length <= 3) {
+      return;
+    }
+
+    // Search Flathub for the given query
+    console.log(`Searching for '${value}'`);
+    const results = await this.flathub.search(value);
+    const entries = results.map(
+      (result) =>
+        ({
+          flatpakAppId: result.id,
+          name: result.name,
+          summary: result.summary,
+          iconMobileUrl: result.icon,
+        } as FlatpakEntry)
+    );
+    this.setState({ entries: entries });
+  }
+
   render(props: HomeProps) {
     const entries = this.state.entries ? this.state.entries : [];
     return (
@@ -40,7 +66,10 @@ export class Home extends Component<HomeProps, HomeState> {
         style="--basicui-header-height:40px;"
         ref={this.ref}
       >
-        <SearchBar smm={props.smm} />
+        <SearchBar
+          smm={props.smm}
+          onInputChange={(value: string) => this.onSearch(value)}
+        />
         <div
           id="FlathubMain"
           class="gamepadui_Content_1FxmN Panel Focusable gpfocuswithin"

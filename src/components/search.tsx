@@ -3,23 +3,87 @@ import { SMM } from '../types/SMM';
 
 export interface SearchProps {
   smm: SMM;
+  onInputChange?: (value: string) => Promise<void>;
 }
 
-export interface SearchState {}
+export interface SearchState {
+  value: string;
+  focused: boolean;
+}
 
 export class SearchBar extends Component<SearchProps, SearchState> {
-  ref = createRef();
+  ref = createRef<HTMLDivElement>();
+  searchHeader = createRef<HTMLDivElement>();
+  searchContainer = createRef<HTMLDivElement>();
+  searchBackground = createRef<HTMLDivElement>();
+  searchInput = createRef<HTMLInputElement>();
+
+  constructor(props: SearchProps) {
+    super(props);
+  }
+
   async componentDidMount() {
     if (!this.ref.current) {
       return;
     }
   }
 
+  async onClick(e: Event) {
+    console.log(`Clicked search bar: ${e}`);
+    await this.focus();
+  }
+
+  async focus() {
+    if (!this.state.focused) {
+      this.searchHeader.current?.classList.add('gpfocuswithin');
+      this.searchContainer.current?.classList.add('gpfocuswithin');
+      this.searchBackground.current?.classList.add(
+        'searchbar_WhiteBackground_1l8js'
+      );
+      this.searchInput.current?.classList.add(
+        'searchbar_WhiteBackground_1l8js',
+        'gpfocus',
+        'gpfocuswithin'
+      );
+      this.searchInput.current?.focus();
+    } else {
+      this.searchHeader.current?.classList.remove('gpfocuswithin');
+      this.searchContainer.current?.classList.remove('gpfocuswithin');
+      this.searchBackground.current?.classList.remove(
+        'searchbar_WhiteBackground_1l8js'
+      );
+      this.searchInput.current?.classList.remove(
+        'searchbar_WhiteBackground_1l8js',
+        'gpfocus',
+        'gpfocuswithin'
+      );
+    }
+    this.setState({ focused: !this.state.focused, value: this.state.value });
+  }
+
+  async onInput(e: Event) {
+    const value = this.searchInput.current?.value;
+    this.setState({ focused: this.state.focused, value: value });
+    if (this.props.onInputChange && value) {
+      await this.props.onInputChange(value);
+    }
+  }
+
   render(props: SearchProps) {
     return (
-      <div>
-        <div class="header_Header_1E_SL FlexGrowUniversalSearch Panel Focusable">
-          <div class="searchbar_SearchContainer_161Tj searchbar_ForceExpanded_1bmuJ Panel Focusable">
+      <div ref={this.ref}>
+        <div
+          ref={this.searchHeader}
+          class="header_Header_1E_SL FlexGrowUniversalSearch Panel Focusable"
+        >
+          <div
+            ref={this.searchContainer}
+            class="searchbar_SearchContainer_161Tj searchbar_ForceExpanded_1bmuJ Panel Focusable"
+          >
+            <div
+              ref={this.searchBackground}
+              class="searchbar_SearchFieldBackground_3F4YR"
+            ></div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 36 36"
@@ -34,10 +98,13 @@ export class SearchBar extends Component<SearchProps, SearchState> {
               ></path>
             </svg>
             <input
+              ref={this.searchInput}
+              onClick={(e) => this.onClick(e)}
+              onInput={(e) => this.onInput(e)}
               placeholder="Search for flatpaks..."
               class="searchbar_SearchBox_2a1-s searchbar_Visible_1bLfc Focusable"
               tabIndex={0}
-              value=""
+              value={this.state.value}
             />
             <svg
               xmlns="http://www.w3.org/2000/svg"
