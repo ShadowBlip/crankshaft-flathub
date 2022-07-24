@@ -17,7 +17,7 @@ export interface HomeState {
 }
 
 export class Home extends Component<HomeProps, HomeState> {
-  ref = createRef();
+  ref = createRef<HTMLDivElement>();
   flathub: Flathub;
   constructor(props: HomeProps) {
     super(props);
@@ -63,7 +63,7 @@ export class Home extends Component<HomeProps, HomeState> {
   // Invoked when a grid item was selected
   async onAppSelect(value: string) {
     // Scroll to the top
-    document.documentElement.scrollTop = 0;
+    this.ref.current?.scrollIntoView();
     // Set the current app to display the app info
     this.setState({ entries: this.state.entries, currentApp: value });
   }
