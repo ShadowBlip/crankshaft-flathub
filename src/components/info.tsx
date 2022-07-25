@@ -57,6 +57,12 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
   // Gets called when the install button is clicked
   async onAction(value: string) {
     const appId = this.state.info.flatpakAppId;
+    const appInfo = await this.flathub.getAppInfo(appId);
+
+    // Get the plugin state directory
+    const pluginsDir = await this.props.smm.FS.getPluginsPath();
+    const stateDir = `${pluginsDir}/crankshaft-flathub/.state`;
+
     // Handle install action
     if (value === 'Install') {
       this.props.smm.Toast.addToast(`Installing ${appId}...`, 'info', {
@@ -72,6 +78,27 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
         );
         return;
       }
+
+      // Add the installed flatpak as a library shortcut
+      const steamAppId = await window.SteamClient.Apps.AddShortcut(
+        '',
+        appInfo.name
+      );
+
+      // Set the command of the shortcut
+      await window.SteamClient.Apps.SetShortcutExe(
+        steamAppId,
+        `flatpak run --user ${appId}`
+      );
+      await window.SteamClient.Apps.SetShortcutStartDir(steamAppId, '~');
+
+      // Write the steam app id to a file so we can reference it.
+      await this.props.smm.FS.mkDir(stateDir, true);
+      this.props.smm.Exec.run('bash', [
+        '-c',
+        `echo ${steamAppId} > ${stateDir}/${appId}`,
+      ]);
+
       // Re-render after installing
       await this.update(this.props, this.state);
       this.props.smm.Toast.addToast('Done!', 'success');
@@ -90,6 +117,11 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       );
       return;
     }
+
+    // Get the steamAppId from the state directory
+    const steamAppId = await this.props.smm.FS.readFile(`${stateDir}/${appId}`);
+    await window.SteamClient.Apps.RemoveShortcut(Number(steamAppId));
+
     // Re-render after installing
     await this.update(this.props, this.state);
     this.props.smm.Toast.addToast('Done!', 'success');
