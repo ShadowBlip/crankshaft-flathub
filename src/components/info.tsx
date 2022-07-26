@@ -14,6 +14,7 @@ export interface AppInfoState {
   info: FlathubAppEntry;
   imgData: string;
   isInstalled: boolean;
+  isInstalling: boolean;
 }
 
 export class AppInfo extends Component<AppInfoProps, AppInfoState> {
@@ -56,6 +57,12 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
 
   // Gets called when the install button is clicked
   async onAction(value: string) {
+    // Only action on install/uninstall
+    if (!['Install', 'Uninstall'].includes(value)) {
+      return;
+    }
+
+    // Fetch the app info
     const appId = this.state.info.flatpakAppId;
     const appInfo = await this.flathub.getAppInfo(appId);
 
@@ -65,10 +72,14 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
 
     // Handle install action
     if (value === 'Install') {
+      console.log(`Installing ${appId}...`);
       this.props.smm.Toast.addToast(`Installing ${appId}...`, 'info', {
         timeout: 10000,
       });
+      this.setState({ isInstalling: true });
       const out = await this.flathub.install(appId);
+      this.setState({ isInstalling: false });
+
       // Ensure flatpak install succeeded
       if (out.exitCode !== 0) {
         console.log(out);
@@ -80,34 +91,22 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       }
 
       // Add the installed flatpak as a library shortcut
-      const steamAppId = await window.SteamClient.Apps.AddShortcut(
-        '',
-        appInfo.name
-      );
-
-      // Set the command of the shortcut
-      await window.SteamClient.Apps.SetShortcutExe(
-        steamAppId,
-        `flatpak run --user ${appId}`
-      );
-      await window.SteamClient.Apps.SetShortcutStartDir(steamAppId, '~');
-
-      // Write the steam app id to a file so we can reference it.
-      await this.props.smm.FS.mkDir(stateDir, true);
-      this.props.smm.Exec.run('bash', [
-        '-c',
-        `echo ${steamAppId} > ${stateDir}/${appId}`,
-      ]);
+      await this.flathub.addShortcuts();
 
       // Re-render after installing
       await this.update(this.props, this.state);
-      this.props.smm.Toast.addToast('Done!', 'success');
+      this.props.smm.Toast.addToast(
+        `${appInfo.name} installed successfully`,
+        'success'
+      );
       return;
     }
 
     // Handle uninstall action
-    this.props.smm.Toast.addToast('Uninstalling', 'info');
+    console.log(`Uninstalling ${appId}...`);
+    this.props.smm.Toast.addToast(`Uninstalling ${appId}...`, 'info');
     const out = await this.flathub.uninstall(appId);
+
     // Ensure flatpak install succeeded
     if (out.exitCode !== 0) {
       console.log(out);
@@ -118,17 +117,24 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       return;
     }
 
-    // Get the steamAppId from the state directory
-    const steamAppId = await this.props.smm.FS.readFile(`${stateDir}/${appId}`);
-    await window.SteamClient.Apps.RemoveShortcut(Number(steamAppId));
-
     // Re-render after installing
     await this.update(this.props, this.state);
-    this.props.smm.Toast.addToast('Done!', 'success');
+    this.props.smm.Toast.addToast(
+      `${appInfo.name} uninstalled successfully`,
+      'success'
+    );
   }
 
   getTitle(state: AppInfoState) {
-    const buttonText = state.isInstalled ? 'Uninstall' : 'Install';
+    // Set the button text based on state
+    let buttonText = state.isInstalled ? 'Uninstall' : 'Install';
+    if (state.isInstalling) {
+      if (buttonText === 'Install') {
+        buttonText = 'Installing...';
+      } else {
+        buttonText = 'Uninstalling...';
+      }
+    }
     return (
       <div class="partnereventdisplay_LibraryEventTitleContainer_2gdgU">
         <div class="partnereventdisplay_EventDetailTitleContainer_35gM9">

@@ -114,7 +114,7 @@ declare global {
     SteamClient: {
       Apps: {
         // await SteamClient.Apps.AddShortcut("", "MyApp");
-        AddShortcut: (unkwn: string, name: string) => Promise<number>;
+        AddShortcut: (name: string, exe: string) => Promise<number>;
         // await SteamClient.Apps.SetShortcutExe(2856172191, "flatpak run --user org.mozilla.Firefox");
         SetShortcutExe: (id: number, cmd: string) => Promise<void>;
         // await SteamClient.Apps.SetShortcutStartDir(2856172191, "~")
