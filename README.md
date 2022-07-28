@@ -15,3 +15,13 @@ Add the plugin from the Crankshaft plugin management screen.
 ![](doc/image01.png)
 
 ![](doc/image02.png)
+
+## Roadmap
+
+[ ] Controller support
+[ ] Support search using on-screen keyboard
+[ ] Add library shortcut without requiring Steam client restart
+[ ] Automatically add Flatpak shortcuts to a 'Flatpaks' collection
+[ ] Page tab where you can view currently installed Flatpaks
+[ ] Show [SteamGridDB](https://www.steamgriddb.com/) library artwork that will be used for Flatpak shortcut
+[ ] Allow user to cycle through and choose which library artwork from [SteamGridDB](https://www.steamgriddb.com/) they want to use
