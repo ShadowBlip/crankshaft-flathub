@@ -2,13 +2,16 @@
 PLUGIN_NAME ?= $(shell basename $(PWD))
 PLUGIN_VERSION ?= 1.0.0
 
+# Bundled binaries
+BIN_FILES := $(shell find bin -type f)
+
 # Source files
 TS_FILES := $(shell find src -name *.ts)
 TSX_FILES := $(shell find src -name *.tsx)
-SRC_FILES := $(TS_FILES) $(TSX_FILES) plugin.toml
+SRC_FILES := $(TS_FILES) $(TSX_FILES) $(BIN_FILES) plugin.toml
 
 # Output files to include in tar.gz
-TAR_FILES := dist plugin.toml
+TAR_FILES := dist bin plugin.toml
 
 # Crankshaft
 CRANKSHAFT_DATA_PATH ?= .var/app/space.crankshaft.Crankshaft/data/crankshaft
@@ -21,7 +24,7 @@ SSH_CRANKSHAFT_DATA_PATH ?= /home/$(SSH_USER)/$(CRANKSHAFT_DATA_PATH)
 
 # Default target is to build and restart crankshaft
 .PHONY: default
-default: build restart
+default: build
 
 .PHONY: build
 build: build/$(PLUGIN_NAME)-v$(PLUGIN_VERSION).tar.gz ## Builds the project
