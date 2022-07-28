@@ -67,52 +67,38 @@ export class Flathub {
     ]);
   }
 
-  public async addShortcuts() {
-    // Set boilr config
-    // TODO: Can we change this?
-    // f092e3045f4f041c4bf8a9db2cb8c25c
-
-    const homeDir = await this.getHomeDir();
-    const boilerConfDir = `${homeDir}/.config/boilr`;
-    await this.smm.FS.mkDir(boilerConfDir, true);
-    await this.smm.Exec.run('bash', [
-      '-c',
-      `cp ${boilerConfDir}/config.toml ${boilerConfDir}/config.toml.bak`,
-    ]);
-    await this.smm.Exec.run('bash', [
-      '-c',
-      `echo -e '${boilerConfig}' > ${boilerConfDir}/config.toml`,
-    ]);
-
-    // Execute boilr to add shortcuts
-    const pluginsDir = await this.smm.FS.getPluginsPath();
-    const binDir = `${pluginsDir}/crankshaft-flathub/bin`;
-    const out = await this.smm.Exec.run(`${binDir}/boilr`, ['--no-ui']);
-    console.log(out);
-
-    // Restore original boilr config
-    await this.smm.Exec.run('bash', [
-      '-c',
-      `cp ${boilerConfDir}/config.toml.bak ${boilerConfDir}/config.toml`,
-    ]);
-  }
-
   public async addShortcut(appId: string, name: string) {
-    // DISPLAY=:0 steamtinkerlaunch addnonsteamgame --appname=Spotify --exepath=/usr/bin/flatpak --startdir=/home --launchoptions "run com.spotify.Client"
-    const homeDir = await this.getHomeDir();
-    const steamtinkerlaunch = 'steamtinkerlaunch';
-    const cmd = [
-      'DISPLAY=:0',
-      steamtinkerlaunch,
-      'addnonsteamgame',
-      `--appname=${name.replace(' ', '\\ ')}`,
-      `--exepath=/usr/bin/flatpak`,
-      `--startdir=${homeDir.replace(' ', '\\ ')}`,
-      `--launchoptions=run\\ ${appId}`,
+    // Get the path to the shortcut manager binary
+    const pluginsDir = await this.smm.FS.getPluginsPath();
+    const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
+
+    // Execute the shortcut manager to add a steam shortcut
+    const args = [
+      'add',
+      name,
+      '"/usr/bin/flatpak"',
+      '--flatpak-id',
+      appId,
+      '--launch-options',
+      `run ${appId}`,
+      '--download-images',
+      '--api-key',
+      'f092e3045f4f041c4bf8a9db2cb8c25c',
     ];
     console.log(`Adding Steam shortcut for: ${appId}`);
-    console.log(cmd);
-    const out = await this.smm.Exec.run('bash', ['-c', cmd.join(' ')]);
+    const out = await this.smm.Exec.run(shortcutMgr, args);
+    console.log(out);
+  }
+
+  public async removeShortcut(name: string) {
+    // Get the path to the shortcut manager binary
+    const pluginsDir = await this.smm.FS.getPluginsPath();
+    const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
+
+    // Execute the shortcut manager
+    const args = ['remove', name];
+    console.log(`Removing Steam shortcut for: ${name}`);
+    const out = await this.smm.Exec.run(shortcutMgr, args);
     console.log(out);
   }
 

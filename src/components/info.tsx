@@ -91,7 +91,7 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       }
 
       // Add the installed flatpak as a library shortcut
-      await this.flathub.addShortcuts();
+      await this.flathub.addShortcut(appId, appInfo.name);
 
       // Re-render after installing
       await this.update(this.props, this.state);
@@ -116,6 +116,9 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       );
       return;
     }
+
+    // Add the installed flatpak as a library shortcut
+    await this.flathub.removeShortcut(appInfo.name);
 
     // Re-render after installing
     await this.update(this.props, this.state);
