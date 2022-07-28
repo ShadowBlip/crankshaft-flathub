@@ -12,6 +12,6 @@ Add the plugin from the Crankshaft plugin management screen.
 
 ## Screenshots
 
-![](./doc/image01.png)
+![](doc/image01.png)
 
-![](./doc/image02.png)
+![](doc/image02.png)
