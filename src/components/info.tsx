@@ -96,7 +96,7 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       // Re-render after installing
       await this.update(this.props, this.state);
       this.props.smm.Toast.addToast(
-        `${appInfo.name} installed successfully`,
+        `${appInfo.name} installed successfully. Please restart Steam.`,
         'success'
       );
       return;
@@ -123,7 +123,7 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     // Re-render after installing
     await this.update(this.props, this.state);
     this.props.smm.Toast.addToast(
-      `${appInfo.name} uninstalled successfully`,
+      `${appInfo.name} uninstalled successfully. Please restart Steam.`,
       'success'
     );
   }

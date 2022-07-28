@@ -3,6 +3,10 @@ import { boilerConfig } from '../util/boilr';
 
 import { FlathubAppEntry, FlathubSearchEntry, FlatpakEntry } from './model';
 
+// TODO: Run flathub repair --user
+// flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+// flatpak remote-add --user --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+
 export class Flathub {
   smm: SMM;
   constructor(smm: SMM) {
@@ -67,7 +71,28 @@ export class Flathub {
     ]);
   }
 
+  public async downloadArtwork(shortcutAppId: string, name: string) {
+    // Get the path to the shortcut manager binary
+    const pluginsDir = await this.smm.FS.getPluginsPath();
+    const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
+
+    // Execute the shortcut manager to add a steam shortcut
+    const args = [
+      'steamgriddb',
+      'download',
+      '--api-key',
+      'f092e3045f4f041c4bf8a9db2cb8c25c',
+      '--app-id',
+      shortcutAppId,
+      name,
+    ];
+    console.log(`Downloading artwork for ${name}`);
+    const out = await this.smm.Exec.run(shortcutMgr, args);
+    console.log(out);
+  }
+
   public async addShortcut(appId: string, name: string) {
+    // await SteamClient.Apps.AddShortcut('Spotify', '"/usr/bin/flatpak"')
     // Get the path to the shortcut manager binary
     const pluginsDir = await this.smm.FS.getPluginsPath();
     const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
@@ -80,7 +105,7 @@ export class Flathub {
       '--flatpak-id',
       appId,
       '--launch-options',
-      `run ${appId}`,
+      `run --user ${appId}`,
       '--download-images',
       '--api-key',
       'f092e3045f4f041c4bf8a9db2cb8c25c',
