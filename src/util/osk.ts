@@ -37,6 +37,21 @@ export const OpenVirtualKeyboard = async (props: VirtualKeyboardProps) => {
     };
   }
 
+  // Update the Crankshaft handler so it won't intercept for the keyboard
+  // NOTE: This should be handled in a future Crankshaft version
+  const handler = window.csButtonInterceptors![0].handler;
+  window.csButtonInterceptors![0].handler = (
+    buttonCode: number
+  ): boolean | void => {
+    if (
+      window.coolClass.VirtualKeyboardManager.IsShowingVirtualKeyboard
+        .m_currentValue
+    ) {
+      return false;
+    }
+    return handler(buttonCode);
+  };
+
   // coolClass.VirtualKeyboardManager.SetVirtualKeyboardShown(0)
   //@ts-ignore
   //window.coolClass.VirtualKeyboardManager.SetVirtualKeyboardShown(1);
