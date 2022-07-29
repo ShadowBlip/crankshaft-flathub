@@ -11,16 +11,35 @@ export interface GridItemProps {
 }
 
 export interface GridItemState {
+  selected: boolean;
   imgData: string;
   imgUrl: string;
 }
 
 export class GridItem extends Component<GridItemProps, GridItemState> {
-  ref = createRef();
+  ref = createRef<HTMLDivElement>();
   async componentDidMount() {
     if (!this.ref.current) {
       return;
     }
+
+    // Observe if someone mutates our class
+    const observer = new MutationObserver((mutations: MutationRecord[]) => {
+      // Set the grid item to selected if we see gamepad focus
+      if (this.ref.current!.classList.contains('cs-gp-focus')) {
+        this.setState({ selected: true });
+        return;
+      }
+      this.setState({ selected: false });
+    });
+    observer.observe(this.ref.current, {
+      attributes: true,
+      attributeFilter: ['class'],
+      childList: false,
+      characterData: false,
+    });
+
+    // Fetch and render the grid image
     const imgData = await cachedCurlBase64(this.props.smm, this.props.img);
     this.setState({
       imgData: `data:image/png;base64, ${imgData}`,
@@ -50,11 +69,15 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
   }
 
   render(props: GridItemProps, state: GridItemState) {
+    const style = state.selected ? 'border-style: ridge;' : '';
     return (
       <div
         ref={this.ref}
         class="allcollections_Collection_3IWn- Focusable gpfocuswithin"
+        data-cs-gp-in-group="flathub-app-list"
+        data-cs-gp-item={`flathub-app-list__${props.appId}`}
         onClick={(e: Event) => this.onClick(e)}
+        style={style}
         tabIndex={0}
       >
         <div class="allcollections_CollectionImage_2ERAQ allcollections_Has1Apps_3R8nX">

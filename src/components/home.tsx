@@ -41,6 +41,7 @@ export class Home extends Component<HomeProps, HomeState> {
     }
   }
 
+  // Gets called when the user starts to type in the search field
   async onSearch(value: string) {
     // Reset UI if search filter is empty
     if (value === '') {
@@ -71,6 +72,12 @@ export class Home extends Component<HomeProps, HomeState> {
   async onAppSelect(value: string) {
     // Set the current app to display the app info
     this.setState({ entries: this.state.entries, currentApp: value });
+
+    // Change gmaepad focus to the info panel
+    // @ts-ignore
+    this.props.smm.activeGamepadHandler.recalculateTree();
+    // @ts-ignore
+    this.props.smm.activeGamepadHandler.updateFocused('flathub-app-info');
   }
 
   render(props: HomeProps, state: HomeState) {
@@ -83,6 +90,7 @@ export class Home extends Component<HomeProps, HomeState> {
     return (
       <div
         class="BasicUI GamepadMode gamepadui_BasicUiRoot_bo6E MediumWindow"
+        data-cs-gp-in-group="root"
         style="--basicui-header-height:40px;"
         ref={this.ref}
       >
@@ -110,6 +118,8 @@ export class Home extends Component<HomeProps, HomeState> {
               <div
                 class="cssgrid_CSSGrid_3vHkm allcollections_Grid_Ma65K Panel Focusable gpfocuswithin"
                 style="grid-template-columns: repeat(auto-fill, 170px); grid-auto-rows: 185px; gap: 22px; font-size: 16.8182px; paddding-left: 0px; padding-right: 0px;"
+                data-cs-gp-in-group="root"
+                data-cs-gp-group="flathub-app-list"
               >
                 {entries.map((entry) => (
                   <GridItem

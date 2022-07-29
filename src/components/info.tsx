@@ -227,6 +227,8 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       <div
         ref={this.ref}
         class="basicpartnereventspage_BasicPartnerEvent_2yuwU apppartnereventspage_PartnerEvent_lwprN partnereventdisplay_InLibraryView_3X6U9"
+        data-cs-gp-in-group="root"
+        data-cs-gp-group="flathub-app-info"
       >
         <img src="" class="partnereventdisplay_EventBackgroundBlur_eti5E" />
         {title}

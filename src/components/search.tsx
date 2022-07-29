@@ -79,6 +79,10 @@ export class SearchBar extends Component<SearchProps, SearchState> {
           <div
             ref={this.searchContainer}
             class="searchbar_SearchContainer_161Tj searchbar_ForceExpanded_1bmuJ Panel Focusable"
+            data-cs-gp-in-group="root"
+            data-cs-gp-item="flathub-search-bar"
+            data-cs-gp-init-focus="true"
+            onClick={(e) => this.onClick(e)}
           >
             <div
               ref={this.searchBackground}

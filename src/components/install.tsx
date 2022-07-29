@@ -28,9 +28,12 @@ export class InstallButton extends Component<
   render(props: InstallButtonProps, state: InstallButtonState) {
     return (
       <div ref={this.ref} style="margin-left: auto; margin-right: 0;">
+        {/* The install button has data-cs-gp for gamepad focus */}
         <div
           class="appactionbutton_PlayButton_3ydig appactionbutton_ButtonChild_2AzIX Focusable gpfocus gpfocuswithin"
           style="display: flex; justify-content: flex-end;"
+          data-cs-gp-in-group="flathub-app-info"
+          data-cs-gp-item="flathub-app-info-install"
           onClick={(e: Event) => {
             this.onClick(e);
           }}
