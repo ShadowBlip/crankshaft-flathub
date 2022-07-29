@@ -75,6 +75,10 @@ $(SSH_MOUNT_PATH)/.mounted:
 $(SSH_MOUNT_PATH)/plugins/$(PLUGIN_NAME): $(SRC_FILES)
 	rsync -avh $(PWD)/ $(SSH_MOUNT_PATH)/plugins/$(PLUGIN_NAME) --delete
 
+.PHONY: release
+release: ## Calls semantic-release to publish a new release
+	npx semantic-release
+
 .PHONY: remote-restart
 remote-restart: ## Restart remote crankshaft
 	ssh $(SSH_USER)@$(SSH_HOST) systemctl --user restart crankshaft
