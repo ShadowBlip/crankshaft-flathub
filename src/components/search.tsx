@@ -56,7 +56,7 @@ export class SearchBar extends Component<SearchProps, SearchState> {
       searchInput.focus();
 
       // Open the virtual keyboard
-      OpenVirtualKeyboard({
+      await OpenVirtualKeyboard({
         BIsElementValidForInput: () => true,
         onKeyboardShow: () => {
           console.log('Keyboard shown!');

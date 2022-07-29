@@ -34,6 +34,21 @@ export class Home extends Component<HomeProps, HomeState> {
     const parent = this.ref.current.parentElement as HTMLDivElement;
     parent.style.padding = '0px';
 
+    // Update the Crankshaft handler so it won't intercept for the keyboard
+    // NOTE: This should be handled in a future Crankshaft version
+    const handler = window.csButtonInterceptors![0].handler;
+    window.csButtonInterceptors![0].handler = (
+      buttonCode: number
+    ): boolean | void => {
+      if (
+        window.coolClass.VirtualKeyboardManager.IsShowingVirtualKeyboard
+          .m_currentValue
+      ) {
+        return false;
+      }
+      return handler(buttonCode);
+    };
+
     // TODO: This is a weird hack to move ourselves to the correct place in the
     // DOM in order for the on-screen keyboard to render over us correctly.
     if (window.smmUIMode == 'deck') {
