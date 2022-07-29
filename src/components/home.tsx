@@ -34,6 +34,17 @@ export class Home extends Component<HomeProps, HomeState> {
     const parent = this.ref.current.parentElement as HTMLDivElement;
     parent.style.padding = '0px';
 
+    // TODO: This is a weird hack to move ourselves to the correct place in the
+    // DOM in order for the on-screen keyboard to render over us correctly.
+    if (window.smmUIMode == 'deck') {
+      const steamNavMenu = document.getElementById(
+        'MainNavMenu-Rest'
+      ) as HTMLDivElement;
+      const crankRoot = parent.parentElement as HTMLDivElement;
+      crankRoot.style.zIndex = '4';
+      steamNavMenu.appendChild(crankRoot);
+    }
+
     // Load the popular entries on load
     const entries = (await this.flathub.getPopular()).filter(
       (entry) => entry.flatpakAppId !== 'com.valvesoftware.Steam'
@@ -55,6 +66,9 @@ export class Home extends Component<HomeProps, HomeState> {
       return await this.componentDidMount();
     }
 
+    // Whenever we start searching, clear the app info
+    await this.clearCurrentApp();
+
     // Do nothing until we have at least 3 characters
     if (value.length <= 3) {
       return;
@@ -73,6 +87,14 @@ export class Home extends Component<HomeProps, HomeState> {
         } as FlatpakEntry)
     );
     this.setState({ entries: entries, currentApp: this.state.currentApp });
+  }
+
+  // Clears the current app so the UI will remove the AppInfo menu
+  async clearCurrentApp() {
+    if (!this.state.currentApp) {
+      return;
+    }
+    this.setState({ currentApp: '' });
   }
 
   // Invoked when a grid item was selected

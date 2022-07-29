@@ -28,13 +28,16 @@ export class SearchBar extends Component<SearchProps, SearchState> {
     }
   }
 
+  // Gets called when the search bar gets clicked
   async onClick(e: Event) {
     console.log(`Clicked search bar: ${e}`);
     await this.focus();
   }
 
+  // Will update the classes to change the look of the search bar.
   async focus() {
     if (!this.state.focused) {
+      // If we're not focused, focus us!
       this.searchHeader.current?.classList.add('gpfocuswithin');
       this.searchContainer.current?.classList.add('gpfocuswithin');
       this.searchBackground.current?.classList.add(
@@ -47,6 +50,7 @@ export class SearchBar extends Component<SearchProps, SearchState> {
       );
       this.searchInput.current?.focus();
     } else {
+      // If we are focused, UN-focus us!
       this.searchHeader.current?.classList.remove('gpfocuswithin');
       this.searchContainer.current?.classList.remove('gpfocuswithin');
       this.searchBackground.current?.classList.remove(
@@ -61,6 +65,7 @@ export class SearchBar extends Component<SearchProps, SearchState> {
     this.setState({ focused: !this.state.focused, value: this.state.value });
   }
 
+  // onInput gets called every time a letter is typed into the search bar.
   async onInput(e: Event) {
     const value = this.searchInput.current?.value;
     this.setState({ focused: this.state.focused, value: value });
@@ -105,6 +110,8 @@ export class SearchBar extends Component<SearchProps, SearchState> {
               ref={this.searchInput}
               onClick={(e) => this.onClick(e)}
               onInput={(e) => this.onInput(e)}
+              data-cs-gp-in-group="flathub-search-bar"
+              data-cs-gp-item="flathub-search-bar-input"
               placeholder="Search for flatpaks..."
               class="searchbar_SearchBox_2a1-s searchbar_Visible_1bLfc Focusable"
               tabIndex={0}
