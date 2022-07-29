@@ -96,9 +96,20 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       // Re-render after installing
       await this.update(this.props, this.state);
       this.props.smm.Toast.addToast(
-        `${appInfo.name} installed successfully. Please restart Steam.`,
+        `${appInfo.name} installed successfully.`,
         'success'
       );
+
+      // Prompt the user to restart Steam
+      try {
+        await this.props.smm.UI.confirm({
+          message: 'To start using this application, you must restart Steam.',
+          confirmText: 'Restart Now',
+          cancelText: 'Restart Later',
+        });
+        await (window as any).SteamClient.User.StartRestart();
+      } catch (err) {}
+
       return;
     }
 
@@ -123,9 +134,19 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     // Re-render after installing
     await this.update(this.props, this.state);
     this.props.smm.Toast.addToast(
-      `${appInfo.name} uninstalled successfully. Please restart Steam.`,
+      `${appInfo.name} uninstalled successfully.`,
       'success'
     );
+
+    // Prompt the user to restart Steam
+    try {
+      await this.props.smm.UI.confirm({
+        message: 'To fully remove this application, you must restart Steam.',
+        confirmText: 'Restart Now',
+        cancelText: 'Restart Later',
+      });
+      await (window as any).SteamClient.User.StartRestart();
+    } catch (err) {}
   }
 
   getTitle(state: AppInfoState) {
