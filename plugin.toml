@@ -18,3 +18,18 @@ link = "https://github.com/ShadowApex"
 	library = true
 	menu = false
 	quick-access = false
+
+[store]
+description = """
+Crankshaft Flathub lets you easily browse, search, manage, and install Flatpaks
+from Flathub from the comfort of the Steam UI.
+
+This plugin uses the "steam-shortcut-manager" command-line tool to automatically
+add your installed Flatpaks as Steam Library shortcuts, and tries to automatically
+download the grid artwork for your Flatpak applications from SteamGridDB so they 
+look nice in your Steam library.
+
+NOTE: Crankshaft Flathub currently only works with a touchscreen/mouse and
+keyboard. Gamepad and on-screen keyboard support is planned for a future release.
+"""
+
