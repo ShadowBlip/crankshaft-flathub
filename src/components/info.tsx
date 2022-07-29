@@ -29,6 +29,12 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     if (!this.ref.current) {
       return;
     }
+    // Change gmaepad focus to the info panel
+    // @ts-ignore
+    this.props.smm.activeGamepadHandler.recalculateTree();
+    // @ts-ignore
+    this.props.smm.activeGamepadHandler.updateFocused('flathub-app-info');
+
     await this.update(this.props, this.state);
   }
 
