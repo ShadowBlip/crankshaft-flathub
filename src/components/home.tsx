@@ -28,6 +28,13 @@ export class Home extends Component<HomeProps, HomeState> {
     if (!this.ref.current) {
       return;
     }
+
+    // NOTE: Crankshaft puts us under a weird div with padding. Mutate
+    // that so we have no padding in our parent.
+    const parent = this.ref.current.parentElement as HTMLDivElement;
+    parent.style.padding = '0px';
+
+    // Load the popular entries on load
     const entries = (await this.flathub.getPopular()).filter(
       (entry) => entry.flatpakAppId !== 'com.valvesoftware.Steam'
     );
@@ -118,8 +125,6 @@ export class Home extends Component<HomeProps, HomeState> {
               <div
                 class="cssgrid_CSSGrid_3vHkm allcollections_Grid_Ma65K Panel Focusable gpfocuswithin"
                 style="grid-template-columns: repeat(auto-fill, 170px); grid-auto-rows: 185px; gap: 22px; font-size: 16.8182px; paddding-left: 0px; padding-right: 0px;"
-                data-cs-gp-in-group="root"
-                data-cs-gp-group="flathub-app-list"
               >
                 {entries.map((entry) => (
                   <GridItem

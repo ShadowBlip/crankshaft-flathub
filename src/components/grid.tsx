@@ -74,7 +74,7 @@ export class GridItem extends Component<GridItemProps, GridItemState> {
       <div
         ref={this.ref}
         class="allcollections_Collection_3IWn- Focusable gpfocuswithin"
-        data-cs-gp-in-group="flathub-app-list"
+        data-cs-gp-in-group="root"
         data-cs-gp-item={`flathub-app-list__${props.appId}`}
         onClick={(e: Event) => this.onClick(e)}
         style={style}

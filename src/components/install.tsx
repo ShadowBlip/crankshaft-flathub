@@ -5,7 +5,9 @@ export interface InstallButtonProps {
   onSelect?: (value: string) => Promise<void>;
 }
 
-export interface InstallButtonState {}
+export interface InstallButtonState {
+  selected: boolean;
+}
 
 export class InstallButton extends Component<
   InstallButtonProps,
@@ -17,6 +19,22 @@ export class InstallButton extends Component<
     if (!this.ref.current) {
       return;
     }
+
+    // Observe if someone mutates our class
+    const observer = new MutationObserver((mutations: MutationRecord[]) => {
+      // Set the grid item to selected if we see gamepad focus
+      if (this.ref.current!.classList.contains('cs-gp-focus')) {
+        this.setState({ selected: true });
+        return;
+      }
+      this.setState({ selected: false });
+    });
+    observer.observe(this.ref.current, {
+      attributes: true,
+      attributeFilter: ['class'],
+      childList: false,
+      characterData: false,
+    });
   }
 
   async onClick(e: Event) {
@@ -26,12 +44,17 @@ export class InstallButton extends Component<
     }
   }
   render(props: InstallButtonProps, state: InstallButtonState) {
+    const defaultStyle = 'display: flex; justify-content: flex-end;';
+    const style = state.selected
+      ? defaultStyle + 'border-style: ridge'
+      : defaultStyle;
     return (
-      <div ref={this.ref} style="margin-left: auto; margin-right: 0;">
+      <div style="margin-left: auto; margin-right: 0;">
         {/* The install button has data-cs-gp for gamepad focus */}
         <div
+          ref={this.ref}
           class="appactionbutton_PlayButton_3ydig appactionbutton_ButtonChild_2AzIX Focusable gpfocus gpfocuswithin"
-          style="display: flex; justify-content: flex-end;"
+          style={style}
           data-cs-gp-in-group="flathub-app-info"
           data-cs-gp-item="flathub-app-info-install"
           onClick={(e: Event) => {
