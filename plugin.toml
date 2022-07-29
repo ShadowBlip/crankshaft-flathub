@@ -2,7 +2,7 @@ name = "Flathub"
 version = "1.0.0"
 link = "https://github.com/ShadowBlip/crankshaft-flathub"
 source = "https://github.com/ShadowBlip/crankshaft-flathub"
-min-crankshaft-version = "0.1.5"
+min-crankshaft-version = "0.2.1"
 
 [author]
 name = "William Edwards"

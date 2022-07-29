@@ -66,53 +66,57 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     const appId = this.state.info.flatpakAppId;
     const appInfo = await this.flathub.getAppInfo(appId);
 
-    // Get the plugin state directory
-    const pluginsDir = await this.props.smm.FS.getPluginsPath();
-    const stateDir = `${pluginsDir}/crankshaft-flathub/.state`;
-
     // Handle install action
     if (value === 'Install') {
-      console.log(`Installing ${appId}...`);
-      this.props.smm.Toast.addToast(`Installing ${appId}...`, 'info', {
-        timeout: 10000,
-      });
-      this.setState({ isInstalling: true });
-      const out = await this.flathub.install(appId);
-      this.setState({ isInstalling: false });
+      await this.install(appId, appInfo);
+      return;
+    }
+    await this.uninstall(appId, appInfo);
+  }
 
-      // Ensure flatpak install succeeded
-      if (out.exitCode !== 0) {
-        console.log(out);
-        this.props.smm.Toast.addToast(
-          `Error installing ${appId}: ${out.stderr}`,
-          'error'
-        );
-        return;
-      }
+  // Installs the given Flatpak
+  async install(appId: string, appInfo: FlathubAppEntry) {
+    console.log(`Installing ${appId}...`);
+    this.props.smm.Toast.addToast(`Installing ${appId}...`, 'info', {
+      timeout: 10000,
+    });
+    this.setState({ isInstalling: true });
+    const out = await this.flathub.install(appId);
+    this.setState({ isInstalling: false });
 
-      // Add the installed flatpak as a library shortcut
-      await this.flathub.addShortcut(appId, appInfo.name);
-
-      // Re-render after installing
-      await this.update(this.props, this.state);
+    // Ensure flatpak install succeeded
+    if (out.exitCode !== 0) {
+      console.log(out);
       this.props.smm.Toast.addToast(
-        `${appInfo.name} installed successfully.`,
-        'success'
+        `Error installing ${appId}: ${out.stderr}`,
+        'error'
       );
-
-      // Prompt the user to restart Steam
-      try {
-        await this.props.smm.UI.confirm({
-          message: 'To start using this application, you must restart Steam.',
-          confirmText: 'Restart Now',
-          cancelText: 'Restart Later',
-        });
-        await (window as any).SteamClient.User.StartRestart();
-      } catch (err) {}
-
       return;
     }
 
+    // Add the installed flatpak as a library shortcut
+    await this.flathub.addShortcut(appId, appInfo.name);
+
+    // Re-render after installing
+    await this.update(this.props, this.state);
+    this.props.smm.Toast.addToast(
+      `${appInfo.name} installed successfully.`,
+      'success'
+    );
+
+    // Prompt the user to restart Steam
+    try {
+      await this.props.smm.UI.confirm({
+        message: 'To start using this application, you must restart Steam.',
+        confirmText: 'Restart Now',
+        cancelText: 'Restart Later',
+      });
+      await (window as any).SteamClient.User.StartRestart();
+    } catch (err) {}
+  }
+
+  // Uninstalls the given flatpak
+  async uninstall(appId: string, appInfo: FlathubAppEntry) {
     // Handle uninstall action
     console.log(`Uninstalling ${appId}...`);
     this.props.smm.Toast.addToast(`Uninstalling ${appId}...`, 'info');
@@ -149,6 +153,7 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     } catch (err) {}
   }
 
+  // getTitle will return the UI for the top section of the info menu
   getTitle(state: AppInfoState) {
     // Set the button text based on state
     let buttonText = state.isInstalled ? 'Uninstall' : 'Install';
@@ -203,6 +208,7 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     );
   }
 
+  // getBody will return the body of the info menu
   getBody(info: FlathubAppEntry) {
     return (
       <div class="partnereventdisplay_LibraryEventBodyContainer_2ZgLv">
