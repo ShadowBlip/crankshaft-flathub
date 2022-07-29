@@ -69,8 +69,8 @@ export class Home extends Component<HomeProps, HomeState> {
     // Whenever we start searching, clear the app info
     await this.clearCurrentApp();
 
-    // Do nothing until we have at least 3 characters
-    if (value.length <= 3) {
+    // Do nothing until we have at least 2 characters
+    if (value.length <= 2) {
       return;
     }
 

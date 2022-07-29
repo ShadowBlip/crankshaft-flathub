@@ -124,6 +124,9 @@ declare global {
         // await SteamClient.Apps.RemoveShortcut(2492847199);
         RemoveShortcut: (id: number) => Promise<void>;
       };
+      Input: {
+        ControllerKeyboardSendText: (text: string) => void;
+      };
       Settings: {
         SetCefRemoteDebuggingEnabled: (value: boolean) => void;
       };

@@ -1,5 +1,6 @@
 import { Component, createRef } from 'preact';
 import { SMM } from '../types/SMM';
+import { OpenVirtualKeyboard, SpecialKeys } from '../util/osk';
 
 export interface SearchProps {
   smm: SMM;
@@ -36,27 +37,42 @@ export class SearchBar extends Component<SearchProps, SearchState> {
 
   // Will update the classes to change the look of the search bar.
   async focus() {
+    const searchHeader = this.searchHeader.current;
+    const searchContainer = this.searchContainer.current;
+    const searchBackground = this.searchBackground.current;
+    const searchInput = this.searchInput.current!;
+
+    // Toggle focus depending on if we're already focused.
     if (!this.state.focused) {
       // If we're not focused, focus us!
-      this.searchHeader.current?.classList.add('gpfocuswithin');
-      this.searchContainer.current?.classList.add('gpfocuswithin');
-      this.searchBackground.current?.classList.add(
-        'searchbar_WhiteBackground_1l8js'
-      );
-      this.searchInput.current?.classList.add(
+      searchHeader?.classList.add('gpfocuswithin');
+      searchContainer?.classList.add('gpfocuswithin');
+      searchBackground?.classList.add('searchbar_WhiteBackground_1l8js');
+      searchInput.classList.add(
         'searchbar_WhiteBackground_1l8js',
         'gpfocus',
         'gpfocuswithin'
       );
-      this.searchInput.current?.focus();
+      searchInput.focus();
+
+      // Open the virtual keyboard
+      OpenVirtualKeyboard({
+        BIsElementValidForInput: () => true,
+        onKeyboardShow: () => {
+          console.log('Keyboard shown!');
+        },
+        onEnterKeyPress: (): string => {
+          console.log('Enter pressed!');
+          return 'Enter';
+        },
+        strEnterKeyLabel: 'Search!',
+      });
     } else {
       // If we are focused, UN-focus us!
-      this.searchHeader.current?.classList.remove('gpfocuswithin');
-      this.searchContainer.current?.classList.remove('gpfocuswithin');
-      this.searchBackground.current?.classList.remove(
-        'searchbar_WhiteBackground_1l8js'
-      );
-      this.searchInput.current?.classList.remove(
+      searchHeader?.classList.remove('gpfocuswithin');
+      searchContainer?.classList.remove('gpfocuswithin');
+      searchBackground?.classList.remove('searchbar_WhiteBackground_1l8js');
+      searchInput.classList.remove(
         'searchbar_WhiteBackground_1l8js',
         'gpfocus',
         'gpfocuswithin'
