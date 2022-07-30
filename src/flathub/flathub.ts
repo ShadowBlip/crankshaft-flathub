@@ -73,6 +73,7 @@ export class Flathub {
       '--user',
       'install',
       '-y',
+      'flathub',
       appId,
     ]);
   }

@@ -1,6 +1,6 @@
 # Configuration settings
 PLUGIN_NAME ?= $(shell basename $(PWD))
-PLUGIN_VERSION ?= 1.1.0
+PLUGIN_VERSION ?= 1.1.1
 
 # Bundled binaries
 BIN_FILES := $(shell find bin -type f)
