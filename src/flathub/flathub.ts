@@ -1,3 +1,4 @@
+import { hasChimera } from '../chimera/chimera';
 import { SMM } from '../types/SMM';
 
 import { FlathubAppEntry, FlathubSearchEntry, FlatpakEntry } from './model';
@@ -94,7 +95,7 @@ export class Flathub {
   public async addShortcut(appId: string, name: string) {
     // Detect whether or not there is a Chimera installation. Chimera handles
     // shortcut creation in Steam and stomps over anything else.
-    if (await this.hasChimera()) {
+    if (await hasChimera(this.smm)) {
       await this.addChimeraShortcut(appId, name);
       return;
     }
@@ -103,7 +104,6 @@ export class Flathub {
 
   // Adds a steam shortcut directly to Steam.
   public async addSteamShortcut(appId: string, name: string) {
-    // await SteamClient.Apps.AddShortcut('Spotify', '"/usr/bin/flatpak"')
     // Get the path to the shortcut manager binary
     const pluginsDir = await this.smm.FS.getPluginsPath();
     const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
@@ -128,7 +128,6 @@ export class Flathub {
 
   // Adds a Chimera shortcut, which manages Steam shortcuts for us.
   public async addChimeraShortcut(appId: string, name: string) {
-    // go run . chimera add Spotify "flatpak run --user com.spotify.Client" --flatpak-id com.spotify.Client -i -k 17849fbd6fb8409b7f2825deccbaf307 -o json
     // Get the path to the shortcut manager binary
     const pluginsDir = await this.smm.FS.getPluginsPath();
     const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
@@ -162,7 +161,7 @@ export class Flathub {
     const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
 
     // Execute the shortcut manager
-    const isChimera = await this.hasChimera();
+    const isChimera = await hasChimera(this.smm);
     const args = isChimera ? ['chimera', 'remove', name] : ['remove', name];
     console.log(`Removing shortcut for: ${name}`);
     const out = await this.smm.Exec.run(shortcutMgr, args);
@@ -174,17 +173,5 @@ export class Flathub {
     const homeDir = out.stdout;
 
     return homeDir;
-  }
-
-  // Returns whether or not we detect a Chimera installation
-  async hasChimera(): Promise<boolean> {
-    const out = await this.smm.Exec.run('bash', [
-      '-c',
-      'ls $HOME/.local/share/chimera',
-    ]);
-    if (out.exitCode !== 0) {
-      return false;
-    }
-    return true;
   }
 }

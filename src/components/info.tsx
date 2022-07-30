@@ -1,4 +1,5 @@
 import { Component, createRef, RefObject } from 'preact';
+import { hasChimera } from '../chimera/chimera';
 import { Flathub } from '../flathub/flathub';
 import { FlathubAppEntry } from '../flathub/model';
 import { SMM } from '../types/SMM';
@@ -117,6 +118,9 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
         confirmText: 'Restart Now',
         cancelText: 'Restart Later',
       });
+      if (await hasChimera(this.props.smm)) {
+        (window as any).SteamClient.System.RestartPC();
+      }
       await (window as any).SteamClient.User.StartRestart();
     } catch (err) {}
   }
@@ -155,6 +159,9 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
         confirmText: 'Restart Now',
         cancelText: 'Restart Later',
       });
+      if (await hasChimera(this.props.smm)) {
+        (window as any).SteamClient.System.RestartPC();
+      }
       await (window as any).SteamClient.User.StartRestart();
     } catch (err) {}
   }
