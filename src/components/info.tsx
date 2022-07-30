@@ -30,8 +30,6 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     if (!this.ref.current) {
       return;
     }
-    // Ensure flathub repos are setup
-    await this.flathub.setup();
 
     // Change gmaepad focus to the info panel
     // @ts-ignore

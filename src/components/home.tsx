@@ -29,6 +29,9 @@ export class Home extends Component<HomeProps, HomeState> {
       return;
     }
 
+    // Ensure flathub repos are setup
+    this.flathub.setup();
+
     // NOTE: Crankshaft puts us under a weird div with padding. Mutate
     // that so we have no padding in our parent.
     const parent = this.ref.current.parentElement as HTMLDivElement;

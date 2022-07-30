@@ -10,21 +10,24 @@ export class Flathub {
   }
 
   public async setup(): Promise<void> {
-    await this.smm.Exec.run('flatpak', ['repair', '--user']);
-    await this.smm.Exec.run('flatpak', [
+    let out = await this.smm.Exec.run('flatpak', ['repair', '--user']);
+    console.log(out);
+    out = await this.smm.Exec.run('flatpak', [
       'remote-add',
       '--user',
       '--if-not-exists',
       'flathub',
       'https://flathub.org/repo/flathub.flatpakrepo',
     ]);
-    await this.smm.Exec.run('flatpak', [
+    console.log(out);
+    out = await this.smm.Exec.run('flatpak', [
       'remote-add',
       '--user',
       '--if-not-exists',
       'flathub-beta',
       'https://flathub.org/beta-repo/flathub-beta.flatpakrepo',
     ]);
+    console.log(out);
   }
 
   public async getPopular(): Promise<FlatpakEntry[]> {
