@@ -1,5 +1,5 @@
 name = "Flathub"
-version = "1.0.0"
+version = "1.1.0"
 link = "https://github.com/ShadowBlip/crankshaft-flathub"
 source = "https://github.com/ShadowBlip/crankshaft-flathub"
 min-crankshaft-version = "0.2.1"
@@ -28,8 +28,5 @@ This plugin uses the "steam-shortcut-manager" command-line tool to automatically
 add your installed Flatpaks as Steam Library shortcuts, and tries to automatically
 download the grid artwork for your Flatpak applications from SteamGridDB so they 
 look nice in your Steam library.
-
-NOTE: Crankshaft Flathub currently only works with a touchscreen/mouse and
-keyboard. Gamepad and on-screen keyboard support is planned for a future release.
 """
 
