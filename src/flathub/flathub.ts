@@ -1,5 +1,4 @@
 import { SMM } from '../types/SMM';
-import { boilerConfig } from '../util/boilr';
 
 import { FlathubAppEntry, FlathubSearchEntry, FlatpakEntry } from './model';
 
@@ -91,7 +90,19 @@ export class Flathub {
     console.log(out);
   }
 
+  // Add a Steam shortcut to Steam library
   public async addShortcut(appId: string, name: string) {
+    // Detect whether or not there is a Chimera installation. Chimera handles
+    // shortcut creation in Steam and stomps over anything else.
+    if (await this.hasChimera()) {
+      await this.addChimeraShortcut(appId, name);
+      return;
+    }
+    await this.addSteamShortcut(appId, name);
+  }
+
+  // Adds a steam shortcut directly to Steam.
+  public async addSteamShortcut(appId: string, name: string) {
     // await SteamClient.Apps.AddShortcut('Spotify', '"/usr/bin/flatpak"')
     // Get the path to the shortcut manager binary
     const pluginsDir = await this.smm.FS.getPluginsPath();
@@ -115,14 +126,45 @@ export class Flathub {
     console.log(out);
   }
 
+  // Adds a Chimera shortcut, which manages Steam shortcuts for us.
+  public async addChimeraShortcut(appId: string, name: string) {
+    // go run . chimera add Spotify "flatpak run --user com.spotify.Client" --flatpak-id com.spotify.Client -i -k 17849fbd6fb8409b7f2825deccbaf307 -o json
+    // Get the path to the shortcut manager binary
+    const pluginsDir = await this.smm.FS.getPluginsPath();
+    const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
+
+    // Execute the shortcut manager to add a steam shortcut
+    const args = [
+      'chimera',
+      'add',
+      name,
+      `flatpak run --user ${appId}`,
+      '--flatpak-id',
+      appId,
+      '--tags',
+      'ChimeraOS Playable',
+      '--tags',
+      'Flathub',
+      '--download-images',
+      '--api-key',
+      'f092e3045f4f041c4bf8a9db2cb8c25c',
+      '-o',
+      'json',
+    ];
+    console.log(`Adding Chimera shortcut for: ${appId}`);
+    const out = await this.smm.Exec.run(shortcutMgr, args);
+    console.log(out);
+  }
+
   public async removeShortcut(name: string) {
     // Get the path to the shortcut manager binary
     const pluginsDir = await this.smm.FS.getPluginsPath();
     const shortcutMgr = `${pluginsDir}/crankshaft-flathub/bin/steam-shortcut-manager`;
 
     // Execute the shortcut manager
-    const args = ['remove', name];
-    console.log(`Removing Steam shortcut for: ${name}`);
+    const isChimera = await this.hasChimera();
+    const args = isChimera ? ['chimera', 'remove', name] : ['remove', name];
+    console.log(`Removing shortcut for: ${name}`);
     const out = await this.smm.Exec.run(shortcutMgr, args);
     console.log(out);
   }
@@ -132,5 +174,17 @@ export class Flathub {
     const homeDir = out.stdout;
 
     return homeDir;
+  }
+
+  // Returns whether or not we detect a Chimera installation
+  async hasChimera(): Promise<boolean> {
+    const out = await this.smm.Exec.run('bash', [
+      '-c',
+      'ls $HOME/.local/share/chimera',
+    ]);
+    if (out.exitCode !== 0) {
+      return false;
+    }
+    return true;
   }
 }
