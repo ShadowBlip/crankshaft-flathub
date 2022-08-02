@@ -32,22 +32,6 @@ export class Home extends Component<HomeProps, HomeState> {
     // Ensure flathub repos are setup
     this.flathub.setup();
 
-    // NOTE: Crankshaft puts us under a weird div with padding. Mutate
-    // that so we have no padding in our parent.
-    const parent = this.ref.current.parentElement as HTMLDivElement;
-    parent.style.padding = '0px';
-
-    // TODO: This is a weird hack to move ourselves to the correct place in the
-    // DOM in order for the on-screen keyboard to render over us correctly.
-    if (window.smmUIMode == 'deck') {
-      const steamNavMenu = document.getElementById(
-        'MainNavMenu-Rest'
-      ) as HTMLDivElement;
-      const crankRoot = parent.parentElement as HTMLDivElement;
-      crankRoot.style.zIndex = '4';
-      steamNavMenu.appendChild(crankRoot);
-    }
-
     // Load the popular entries on load
     const entries = (await this.flathub.getPopular()).filter(
       (entry) => entry.flatpakAppId !== 'com.valvesoftware.Steam'
