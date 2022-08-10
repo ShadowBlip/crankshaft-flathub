@@ -3,12 +3,6 @@ import { SMM } from '../types/SMM';
 
 import { FlathubAppEntry, FlathubSearchEntry, FlatpakEntry } from './model';
 
-/*
-william@bravo:~ $ flatpak remote-ls --updates
-Name          Application ID            Version              Branch      Arch
-Veloren       net.veloren.veloren       0.12.0-5258668       stable      x86_64
-*/
-
 export class Flathub {
   smm: SMM;
   constructor(smm: SMM) {

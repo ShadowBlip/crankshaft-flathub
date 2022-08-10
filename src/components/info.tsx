@@ -141,7 +141,7 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
       timeout: 3000,
     });
     this.setState({ isInstalling: true });
-    const out = await this.flathub.uninstall(appId);
+    const out = await this.flathub.update(appId);
     this.setState({ isInstalling: false });
 
     // Ensure flatpak upgrade succeeded
