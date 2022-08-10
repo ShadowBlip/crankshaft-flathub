@@ -20,6 +20,7 @@ Add the plugin from the Crankshaft plugin management screen.
 
 - [x] Controller support
 - [x] Support search using on-screen keyboard
+- [x] Allow users to upgrade installed flatpaks
 - [ ] Add library shortcut without requiring Steam client restart
 - [ ] Automatically add Flatpak shortcuts to a 'Flatpaks' collection
 - [ ] Page tab where you can view currently installed Flatpaks

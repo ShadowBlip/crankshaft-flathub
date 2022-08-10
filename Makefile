@@ -1,6 +1,6 @@
 # Configuration settings
 PLUGIN_NAME ?= $(shell basename $(PWD))
-PLUGIN_VERSION ?= 1.1.3
+PLUGIN_VERSION ?= $(shell grep '^version' plugin.toml | cut -d'"' -f2)
 
 # Bundled binaries
 BIN_FILES := $(shell find bin -type f)
