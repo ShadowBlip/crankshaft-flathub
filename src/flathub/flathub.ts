@@ -3,6 +3,12 @@ import { SMM } from '../types/SMM';
 
 import { FlathubAppEntry, FlathubSearchEntry, FlatpakEntry } from './model';
 
+/*
+william@bravo:~ $ flatpak remote-ls --updates
+Name          Application ID            Version              Branch      Arch
+Veloren       net.veloren.veloren       0.12.0-5258668       stable      x86_64
+*/
+
 export class Flathub {
   smm: SMM;
   constructor(smm: SMM) {
@@ -60,9 +66,30 @@ export class Flathub {
     return appIds;
   }
 
+  // Returns a list of installed flatpaks that have updates
+  public async getUpdates(): Promise<string[]> {
+    const out = await this.smm.Exec.run('flatpak', [
+      '--user',
+      'remote-ls',
+      '--app',
+      '--updates',
+      '--columns=application',
+    ]);
+    const appIds = out.stdout
+      .split('\n')
+      .filter((appId) => appId !== 'Application ID');
+    console.log(appIds);
+    return appIds;
+  }
+
   // Returns whether or not the given app is installed.
   public async isInstalled(appId: string): Promise<boolean> {
     return (await this.getInstalled()).includes(appId);
+  }
+
+  // Returns whether or not the given app has updates
+  public async hasUpdates(appId: string): Promise<boolean> {
+    return (await this.getUpdates()).includes(appId);
   }
 
   // Installs the given flatpak
@@ -77,6 +104,7 @@ export class Flathub {
       appId,
     ]);
   }
+
   // Uninstalls the given flatpak
   public async uninstall(
     appId: string
@@ -84,6 +112,18 @@ export class Flathub {
     return await this.smm.Exec.run('flatpak', [
       '--user',
       'uninstall',
+      '-y',
+      appId,
+    ]);
+  }
+
+  // Updates the given flatpak
+  public async update(
+    appId: string
+  ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+    return await this.smm.Exec.run('flatpak', [
+      '--user',
+      'update',
       '-y',
       appId,
     ]);

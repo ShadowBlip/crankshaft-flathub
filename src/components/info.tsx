@@ -16,6 +16,7 @@ export interface AppInfoState {
   imgData: string;
   isInstalled: boolean;
   isInstalling: boolean;
+  hasUpdates: boolean;
 }
 
 export class AppInfo extends Component<AppInfoProps, AppInfoState> {
@@ -56,17 +57,19 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
 
     // Check to see if the given app is already installed.
     const isInstalled = await this.flathub.isInstalled(appId);
+    const hasUpdates = await this.flathub.hasUpdates(appId);
     this.setState({
       info: info,
       imgData: `data:image/png;base64, ${imgData}`,
       isInstalled: isInstalled,
+      hasUpdates: hasUpdates,
     });
   }
 
   // Gets called when the install button is clicked
   async onAction(value: string) {
     // Only action on install/uninstall
-    if (!['Install', 'Uninstall'].includes(value)) {
+    if (!['Install', 'Uninstall', 'Update'].includes(value)) {
       return;
     }
 
@@ -77,6 +80,10 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     // Handle install action
     if (value === 'Install') {
       await this.install(appId, appInfo);
+      return;
+    }
+    if (value === 'Update') {
+      await this.upgrade(appId, appInfo);
       return;
     }
     await this.uninstall(appId, appInfo);
@@ -126,6 +133,35 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
     } catch (err) {}
   }
 
+  // Updates the given Flatpak
+  async upgrade(appId: string, appInfo: FlathubAppEntry) {
+    // Handle update action
+    console.log(`Upgrading ${appId}...`);
+    this.props.smm.Toast.addToast(`Updating ${appId}...`, 'info', {
+      timeout: 3000,
+    });
+    this.setState({ isInstalling: true });
+    const out = await this.flathub.uninstall(appId);
+    this.setState({ isInstalling: false });
+
+    // Ensure flatpak upgrade succeeded
+    if (out.exitCode !== 0) {
+      console.log(out);
+      this.props.smm.Toast.addToast(
+        `Error upgrading ${appId}: ${out.stderr}`,
+        'error'
+      );
+      return;
+    }
+
+    // Re-render after installing
+    await this.update(this.props, this.state);
+    this.props.smm.Toast.addToast(
+      `${appInfo.name} upgraded successfully.`,
+      'success'
+    );
+  }
+
   // Uninstalls the given flatpak
   async uninstall(appId: string, appInfo: FlathubAppEntry) {
     // Handle uninstall action
@@ -171,8 +207,9 @@ export class AppInfo extends Component<AppInfoProps, AppInfoState> {
   getTitle(state: AppInfoState) {
     // Set the button text based on state
     let buttonText = state.isInstalled ? 'Uninstall' : 'Install';
+    buttonText = state.hasUpdates ? 'Update' : buttonText;
     if (state.isInstalling) {
-      if (buttonText === 'Install') {
+      if (buttonText === 'Install' || buttonText === 'Update') {
         buttonText = 'Installing...';
       } else {
         buttonText = 'Uninstalling...';
