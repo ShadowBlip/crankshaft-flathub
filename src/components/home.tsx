@@ -3,7 +3,7 @@ import { flathubLogo } from '../assets/logos';
 import { Flathub } from '../flathub/flathub';
 import { FlatpakEntry } from '../flathub/model';
 import { SMM } from '../types/SMM';
-import { GridItem } from './grid';
+import { Grid, GridItem } from './grid';
 import { AppInfo } from './info';
 import { SearchBar } from './search';
 
@@ -89,6 +89,13 @@ export class Home extends Component<HomeProps, HomeState> {
     // Set the current app to display the app info
     this.setState({ entries: this.state.entries, currentApp: value });
 
+    // Remove our custom interceptor.
+    const numInterceptors = window.csButtonInterceptors!.length;
+    //@ts-ignore
+    const interceptorId = window.csButtonInterceptors[numInterceptors - 1].id;
+    //@ts-ignore
+    this.props.smm.ButtonInterceptors.removeInterceptor(interceptorId);
+
     // Change gmaepad focus to the info panel
     // @ts-ignore
     this.props.smm.activeGamepadHandler.recalculateTree();
@@ -127,25 +134,11 @@ export class Home extends Component<HomeProps, HomeState> {
                 style="display: block; margin-left: auto; margin-right: auto; padding: 10px;"
               />
             </div>
-            <div
-              class="cssgrid_Container_DGRkX Panel Focusable gpfocuswithin"
-              style="padding-left: 38px;"
-            >
-              <div
-                class="cssgrid_CSSGrid_3vHkm allcollections_Grid_Ma65K Panel Focusable gpfocuswithin"
-                style="grid-template-columns: repeat(auto-fill, 170px); grid-auto-rows: 185px; gap: 22px; font-size: 16.8182px; paddding-left: 0px; padding-right: 0px;"
-              >
-                {entries.map((entry) => (
-                  <GridItem
-                    smm={props.smm}
-                    img={entry.iconMobileUrl}
-                    text={entry.name}
-                    appId={entry.flatpakAppId}
-                    onSelect={(value: string) => this.onAppSelect(value)}
-                  />
-                ))}
-              </div>
-            </div>
+            <Grid
+              smm={props.smm}
+              entries={entries}
+              onSelect={(value) => this.onAppSelect(value)}
+            />
           </div>
         </div>
       </div>
