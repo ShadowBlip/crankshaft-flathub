@@ -1,0 +1,32 @@
+branches:
+  - "+([0-9])?(.{+([0-9]),x}).x"
+  - master
+
+plugins:
+  - "@semantic-release/commit-analyzer"
+  - "@semantic-release/release-notes-generator"
+  - - "@semantic-release/changelog"
+    - changelogFile: "CHANGELOG.md"
+  - - "@google/semantic-release-replace-plugin"
+    - replacements:
+      - files:
+          - plugin.toml
+        from: "version = .*"
+        to: "version = \"${nextRelease.version}\""
+        results:
+          - file: plugin.toml
+            hasChanged: true
+            numMatches: 1
+            numReplacements: 1
+        countMatches: true
+  - - "@semantic-release/exec"
+    - shell: true
+      prepareCmd: "make build"
+  - - "@semantic-release/git"
+    - assets:
+      - CHANGELOG.md
+      - plugin.toml
+  - - "@semantic-release/github"
+    - assets:
+      - path: build/crankshaft-flathub-v${nextRelease.version}.tar.gz
+
